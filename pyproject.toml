@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=77.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pw-foundation"
+version = "1.0.0"
+description = "Dependency-light Python foundation: structured logging, an exception hierarchy, config from env, parallel helpers, pure utilities, and a structural build gate"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Mike Farr" }]
+keywords = [
+    "structured-logging",
+    "exceptions",
+    "configuration",
+    "build-gate",
+    "linting",
+    "foundation",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
+# The whole dependency list. pw-foundation has no extras: a project that needs HTTP,
+# LLM clients, a database or a web layer installs pw-core on top.
+dependencies = [
+    "python-dotenv>=1.2",
+    "pyyaml>=6.0.2",
+    "structlog>=26.1",
+    "nanoid>=2.0",
+    "rich>=15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1",
+    "ruff~=0.16.0",
+    "mypy~=2.3.0",
+    "types-PyYAML",
+    "types-nanoid",
+    "pre-commit>=4.6",
+    "build>=1.2",
+    # Test-only: the exception unwrap is pydantic-specific and is tested against the real thing.
+    "pydantic>=2.13",
+]
+
+[project.urls]
+Documentation = "https://github.com/phierceweb/pw-foundation/blob/main/src/pw_foundation/docs/modules.md"
+Repository = "https://github.com/phierceweb/pw-foundation"
+Changelog = "https://github.com/phierceweb/pw-foundation/blob/main/CHANGELOG.md"
+Issues = "https://github.com/phierceweb/pw-foundation/issues"
+
+[project.scripts]
+pw-guards = "pw_foundation.guards.structure:run_cli"
+pw-doctor = "pw_foundation.doctor:run_cli"
+pw-setup = "pw_foundation.wiring:run_cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"pw_foundation" = ["docs/*.md", "rules/*.md", "py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+# Non-strict: annotated code is checked, untyped defs are not forced. `files`
+# scopes a bare `mypy` to the same surface CI checks; the extensionless bin
+# script is named explicitly because a directory expands to *.py only.
+[tool.mypy]
+python_version = "3.12"
+files = ["src", "bin", "bin/verify-bare-install"]
+scripts_are_modules = true
+
+# Conservative set: ruff's defaults (E, W, F) plus bugbear (B). Layout is
+# enforced by `ruff format`. E501 stays off because the formatter cannot break
+# long string literals.
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-include = ["bin/verify-bare-install"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "B"]
+ignore = ["E501", "B008", "B904"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["B011"]

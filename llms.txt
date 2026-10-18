@@ -1,0 +1,38 @@
+# pw-foundation
+
+> The dependency-light foundation for a Python project: structured logging, an exception hierarchy that separates expected domain failures from real errors, configuration resolved from the environment, console output and parallel helpers, a `Service` base class, pure utilities, and a structural build gate (`pw-guards`) that fails CI on file-size, layering and opt-in function-length, comment-budget and framework-check violations. Five dependencies (python-dotenv, pyyaml, structlog, nanoid, rich), no extras. pw-core — the LLM, database and web framework — depends on it.
+
+Published to PyPI as `pw-foundation` (Python 3.12+); pin `pw-foundation~=1.0` (two components — the 1.x line is additive-only). Docs ship inside the package under `pw_foundation/docs/`, so an installed copy always matches its version — in a consumer repo, `pw-setup` links them at `docs/pw-foundation/`. The URLs below render `main`, the development line.
+
+## Start here
+
+- [README](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/README.md): overview, install, what you get
+- [INSTALLATION](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/INSTALLATION.md): pinning, editable installs alongside pw-core, verification
+- [Module index](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/modules.md): one line per module, grouped by concern
+- [Changelog](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/CHANGELOG.md): release history
+- [Contributing](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/CONTRIBUTING.md)
+
+## Module reference
+
+- [config](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/config.md)
+- [config-path](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/config-path.md)
+- [dates](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/dates.md)
+- [doctor](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/doctor.md)
+- [env](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/env.md)
+- [exceptions](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/exceptions.md)
+- [guards](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/guards.md)
+- [hashing](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/hashing.md)
+- [ids](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/ids.md)
+- [io](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/io.md)
+- [json-utils](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/json-utils.md)
+- [linting](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/linting.md)
+- [logging](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/logging.md)
+- [output](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/output.md)
+- [parallel](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/parallel.md)
+- [periods](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/periods.md)
+- [reload-cache](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/reload-cache.md)
+- [services](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/services.md)
+- [slugify](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/slugify.md)
+- [throttle](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/throttle.md)
+- [wiring](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/wiring.md)
+- [yaml-utils](https://raw.githubusercontent.com/phierceweb/pw-foundation/main/src/pw_foundation/docs/yaml-utils.md)

@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Verify a plain install of pw-foundation is lean and complete.
+
+Builds a throwaway venv, installs this tree — or a built artifact — with no
+extras, and runs bin/bare_install_smoke.py inside it: every module imports on the
+five declared deps, the HTTP / validation / database stacks are absent, the
+console scripts run.
+
+Run from anywhere:
+    python bin/verify-bare-install                                  # the source tree
+    python bin/verify-bare-install dist/pw_foundation-1.0.0-py3-none-any.whl  # the artifact that would ship
+
+Exit codes:
+    0 -- lean and complete
+    1 -- a smoke check failed
+    2 -- venv creation or install failed
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+SMOKE = REPO / "bin" / "bare_install_smoke.py"
+
+
+def _base_python() -> str | None:
+    """A Python >=3.12 to build the venv with (pw-foundation's floor)."""
+    if sys.version_info >= (3, 12):
+        return sys.executable
+    for name in ("python3.13", "python3.12"):
+        found = shutil.which(name)
+        if found:
+            return found
+    return None
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Install pw-foundation into a throwaway venv and smoke it."
+    )
+    parser.add_argument(
+        "artifact",
+        nargs="?",
+        default=str(REPO),
+        help="a built wheel or sdist to install instead of the source tree",
+    )
+    target = Path(parser.parse_args().artifact).resolve()
+    if not target.exists():
+        print(f"ERROR: {target} does not exist", file=sys.stderr)
+        return 2
+    base_py = _base_python()
+    if base_py is None:
+        print("ERROR: need Python >=3.12 to build the verification venv", file=sys.stderr)
+        return 2
+    with tempfile.TemporaryDirectory(prefix="pwverify-") as tmp:
+        venv = Path(tmp) / "venv"
+        py = venv / "bin" / "python"
+        print(f"Creating throwaway venv at {venv} (base: {base_py}) ...", flush=True)
+        if subprocess.run([base_py, "-m", "venv", str(venv)]).returncode:
+            print("ERROR: venv creation failed", file=sys.stderr)
+            return 2
+        print(f"Installing {target} (no extras) ...", flush=True)
+        if subprocess.run([str(py), "-m", "pip", "install", "--quiet", str(target)]).returncode:
+            print(f"ERROR: install of {target} failed", file=sys.stderr)
+            return 2
+        print("Running smoke checks ...\n", flush=True)
+        # cwd=tmp so `import pw_foundation` resolves to the installed copy, never the
+        # source tree under REPO/src; the venv's bin goes first on PATH so the
+        # console scripts under test are the ones just installed.
+        env = {**os.environ, "PATH": f"{venv / 'bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
+        return 1 if subprocess.run([str(py), str(SMOKE)], cwd=tmp, env=env).returncode else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
