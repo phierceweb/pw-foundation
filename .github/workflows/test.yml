@@ -1,0 +1,35 @@
+name: test
+# workflow_call: publish.yml runs this whole workflow on the tagged sha before uploading.
+on:
+  push:
+  pull_request:
+  workflow_call:
+jobs:
+  # Full suite across supported Pythons.
+  full:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests/ -q
+      - run: python -m mypy
+        if: matrix.python-version == '3.12'
+
+  # The dependency claim stays honest: a plain install must import every module
+  # with none of the HTTP / LLM / DB stacks present.
+  bare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - run: python bin/bare_install_smoke.py
